@@ -9,7 +9,7 @@ const helpers = require("../global-setup");
 const { generateWeather, generateWeatherForecast } = require("./mocks");
 
 describe("Weather module", function () {
-	let app;
+	var app;
 
 	helpers.setupTimeout(this);
 
@@ -28,7 +28,7 @@ describe("Weather module", function () {
 	});
 
 	describe("Current weather", function () {
-		let template;
+		var template;
 
 		before(function () {
 			template = fs.readFileSync(path.join(__dirname, "..", "..", "..", "modules", "default", "weather", "current.njk"), "utf8");
@@ -171,7 +171,7 @@ describe("Weather module", function () {
 	});
 
 	describe("Weather Forecast", function () {
-		let template;
+		var template;
 
 		before(function () {
 			template = fs.readFileSync(path.join(__dirname, "..", "..", "..", "modules", "default", "weather", "forecast.njk"), "utf8");

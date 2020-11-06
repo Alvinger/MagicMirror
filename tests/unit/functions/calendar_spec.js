@@ -24,7 +24,7 @@ describe("Functions into modules/default/calendar/calendar.js", function () {
 			ñandú: "Ñandú"
 		};
 
-		Object.keys(words).forEach((word) => {
+		Object.keys(words).forEach(function (word) {
 			it(`for '${word}' should return '${words[word]}'`, function () {
 				expect(Module.definitions.calendar.capFirst(word)).to.equal(words[word]);
 			});
@@ -95,7 +95,7 @@ describe("Functions into modules/default/calendar/calendar.js", function () {
 			"long string with no maxLength defined": { return: "long string with no maxLength defined" }
 		};
 
-		Object.keys(strings).forEach((string) => {
+		Object.keys(strings).forEach(function (string) {
 			it(`for '${string}' should return '${strings[string].return}'`, function () {
 				expect(Module.definitions.calendar.shorten(string, strings[string].length)).to.equal(strings[string].return);
 			});

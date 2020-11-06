@@ -43,7 +43,7 @@ after(function () {
 describe("'global.root_path' set in js/app.js", function () {
 	var expectedSubPaths = ["modules", "serveronly", "js", "js/app.js", "js/main.js", "js/electron.js", "config"];
 
-	expectedSubPaths.forEach((subpath) => {
+	expectedSubPaths.forEach(function (subpath) {
 		it(`contains a file/folder "${subpath}"`, function () {
 			expect(fs.existsSync(path.join(this.sandbox.global.root_path, subpath))).to.equal(true);
 		});

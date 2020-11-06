@@ -46,7 +46,7 @@ WeatherProvider.register("ukmetofficedatahub", {
 
 	// Build URL with query strings according to DataHub API (https://metoffice.apiconnect.ibmcloud.com/metoffice/production/api)
 	getUrl(forecastType) {
-		let queryStrings = "?";
+		var queryStrings = "?";
 		queryStrings += "latitude=" + this.config.lat;
 		queryStrings += "&longitude=" + this.config.lon;
 		if (this.config.appendLocationNameToHeader) {
@@ -61,7 +61,7 @@ WeatherProvider.register("ukmetofficedatahub", {
 	// For DataHub requests, the API key/secret are sent in the headers rather than as query strings.
 	// Headers defined according to Data Hub API (https://metoffice.apiconnect.ibmcloud.com/metoffice/production/api)
 	getHeaders() {
-		let headers = {
+		var headers = {
 			accept: "application/json",
 			"x-ibm-client-id": this.config.apiKey,
 			"x-ibm-client-secret": this.config.apiSecret
@@ -81,7 +81,7 @@ WeatherProvider.register("ukmetofficedatahub", {
 	// Fetch hourly forecast data (to use for current weather)
 	fetchCurrentWeather() {
 		this.fetchWeather(this.getUrl("hourly"), this.getHeaders())
-			.then((data) => {
+			.then(function (data) {
 				// Check data is useable
 				if (!data || !data.features || !data.features[0].properties || !data.features[0].properties.timeSeries || data.features[0].properties.timeSeries.length == 0) {
 					// Did not receive usable new data.
@@ -100,10 +100,14 @@ WeatherProvider.register("ukmetofficedatahub", {
 			})
 
 			// Catch any error(s)
-			.catch((error) => Log.error("Could not load data: " + error.message))
+			.catch(function (error) {
+				Log.error("Could not load data: " + error.message);
+			})
 
 			// Let the module know there're new data available
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	// Create a WeatherObject using current weather data (data for the current hour)
@@ -111,14 +115,14 @@ WeatherProvider.register("ukmetofficedatahub", {
 		const currentWeather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
 
 		// Extract the actual forecasts
-		let forecastDataHours = currentWeatherData.features[0].properties.timeSeries;
+		var forecastDataHours = currentWeatherData.features[0].properties.timeSeries;
 
 		// Define now
-		let nowUtc = moment.utc();
+		var nowUtc = moment.utc();
 
 		// Find hour that contains the current time
 		for (hour in forecastDataHours) {
-			let forecastTime = moment.utc(forecastDataHours[hour].time);
+			var forecastTime = moment.utc(forecastDataHours[hour].time);
 			if (nowUtc.isSameOrAfter(forecastTime) && nowUtc.isBefore(moment(forecastTime.add(1, "h")))) {
 				currentWeather.date = forecastTime;
 				currentWeather.windSpeed = this.convertWindSpeed(forecastDataHours[hour].windSpeed10m);
@@ -142,7 +146,7 @@ WeatherProvider.register("ukmetofficedatahub", {
 		// Determine the sunrise/sunset times - (still) not supplied in UK Met Office data
 		// Passes {longitude, latitude, height} to calcAstroData
 		// Could just pass lat/long from this.config, but returned data from MO also contains elevation
-		let times = this.calcAstroData(currentWeatherData.features[0].geometry.coordinates);
+		var times = this.calcAstroData(currentWeatherData.features[0].geometry.coordinates);
 		currentWeather.sunrise = times[0];
 		currentWeather.sunset = times[1];
 
@@ -152,7 +156,7 @@ WeatherProvider.register("ukmetofficedatahub", {
 	// Fetch daily forecast data
 	fetchWeatherForecast() {
 		this.fetchWeather(this.getUrl("daily"), this.getHeaders())
-			.then((data) => {
+			.then(function (data) {
 				// Check data is useable
 				if (!data || !data.features || !data.features[0].properties || !data.features[0].properties.timeSeries || data.features[0].properties.timeSeries.length == 0) {
 					// Did not receive usable new data.
@@ -171,10 +175,14 @@ WeatherProvider.register("ukmetofficedatahub", {
 			})
 
 			// Catch any error(s)
-			.catch((error) => Log.error("Could not load data: " + error.message))
+			.catch(function (error) {
+				Log.error("Could not load data: " + error.message);
+			})
 
 			// Let the module know there're new data available
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	// Create a WeatherObject for each day using daily forecast data
@@ -182,17 +190,17 @@ WeatherProvider.register("ukmetofficedatahub", {
 		const dailyForecasts = [];
 
 		// Extract the actual forecasts
-		let forecastDataDays = forecasts.features[0].properties.timeSeries;
+		var forecastDataDays = forecasts.features[0].properties.timeSeries;
 
 		// Define today
-		let today = moment.utc().startOf("date");
+		var today = moment.utc().startOf("date");
 
 		// Go through each day in the forecasts
 		for (day in forecastDataDays) {
 			const forecastWeather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
 
 			// Get date of forecast
-			let forecastDate = moment.utc(forecastDataDays[day].time);
+			var forecastDate = moment.utc(forecastDataDays[day].time);
 
 			// Check if forecast is for today or in the future (i.e., ignore yesterday's forecast)
 			if (forecastDate.isSameOrAfter(today)) {
@@ -233,7 +241,7 @@ WeatherProvider.register("ukmetofficedatahub", {
 		const sunTimes = [];
 
 		// Careful to pass values to SunCalc in correct order (latitude, longitude, elevation)
-		let times = SunCalc.getTimes(new Date(), location[1], location[0], location[2]);
+		var times = SunCalc.getTimes(new Date(), location[1], location[0], location[2]);
 		sunTimes.push(moment(times.sunrise, "X"));
 		sunTimes.push(moment(times.sunset, "X"));
 

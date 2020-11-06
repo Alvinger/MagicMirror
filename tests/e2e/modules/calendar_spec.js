@@ -32,13 +32,13 @@ describe("Calendar module", function () {
 			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/default.js";
 		});
 
-		it("should show the default maximumEntries of 10", async () => {
+		it("should show the default maximumEntries of 10", async function () {
 			await app.client.waitUntilTextExists(".calendar", "TestEvent", 10000);
 			const events = await app.client.$$(".calendar .event");
 			return expect(events.length).equals(10);
 		});
 
-		it("should show the default calendar symbol in each event", async () => {
+		it("should show the default calendar symbol in each event", async function () {
 			await app.client.waitUntilTextExists(".calendar", "TestEvent", 10000);
 			const icons = await app.client.$$(".calendar .event .fa-calendar");
 			return expect(icons.length).not.equals(0);
@@ -51,25 +51,25 @@ describe("Calendar module", function () {
 			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/custom.js";
 		});
 
-		it("should show the custom maximumEntries of 4", async () => {
+		it("should show the custom maximumEntries of 4", async function () {
 			await app.client.waitUntilTextExists(".calendar", "TestEvent", 10000);
 			const events = await app.client.$$(".calendar .event");
 			return expect(events.length).equals(4);
 		});
 
-		it("should show the custom calendar symbol in each event", async () => {
+		it("should show the custom calendar symbol in each event", async function () {
 			await app.client.waitUntilTextExists(".calendar", "TestEvent", 10000);
 			const icons = await app.client.$$(".calendar .event .fa-birthday-cake");
 			return expect(icons.length).equals(4);
 		});
 
-		it("should show two custom icons for repeating events", async () => {
+		it("should show two custom icons for repeating events", async function () {
 			await app.client.waitUntilTextExists(".calendar", "TestEventRepeat", 10000);
 			const icons = await app.client.$$(".calendar .event .fa-undo");
 			return expect(icons.length).equals(2);
 		});
 
-		it("should show two custom icons for day events", async () => {
+		it("should show two custom icons for day events", async function () {
 			await app.client.waitUntilTextExists(".calendar", "TestEventDay", 10000);
 			const icons = await app.client.$$(".calendar .event .fa-calendar-day");
 			return expect(icons.length).equals(2);

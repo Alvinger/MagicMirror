@@ -43,13 +43,13 @@ after(function () {
 describe("Default modules set in modules/default/defaultmodules.js", function () {
 	var expectedDefaultModules = ["alert", "calendar", "clock", "compliments", "currentweather", "helloworld", "newsfeed", "weatherforecast", "updatenotification"];
 
-	expectedDefaultModules.forEach((defaultModule) => {
+	expectedDefaultModules.forEach(function (defaultModule) {
 		it(`contains default module "${defaultModule}"`, function () {
 			expect(this.sandbox.defaultModules).to.include(defaultModule);
 		});
 	});
 
-	expectedDefaultModules.forEach((defaultModule) => {
+	expectedDefaultModules.forEach(function (defaultModule) {
 		it(`contains a folder for modules/default/${defaultModule}"`, function () {
 			expect(fs.existsSync(path.join(this.sandbox.global.root_path, "modules/default", defaultModule))).to.equal(true);
 		});

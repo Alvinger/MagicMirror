@@ -24,7 +24,7 @@
 		}
 
 		// Prefer command line arguments over environment variables
-		["address", "port"].forEach((key) => {
+		["address", "port"].forEach(function (key) {
 			config[key] = getCommandLineParameter(key, process.env[key.toUpperCase()]);
 		});
 
@@ -41,10 +41,10 @@
 	 */
 	function getServerConfig(url) {
 		// Return new pending promise
-		return new Promise((resolve, reject) => {
+		return new Promise(function (resolve, reject) {
 			// Select http or https module, depending on requested url
 			const lib = url.startsWith("https") ? require("https") : require("http");
-			const request = lib.get(url, (response) => {
+			const request = lib.get(url, function (response) {
 				var configData = "";
 
 				// Gather incoming data
@@ -113,7 +113,7 @@
 					process.stdout.write(`Client: ${err}`);
 				});
 
-				child.on("close", (code) => {
+				child.on("close", function (code) {
 					if (code !== 0) {
 						console.log(`There something wrong. The clientonly is not running code ${code}`);
 					}

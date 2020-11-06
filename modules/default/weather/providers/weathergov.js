@@ -52,7 +52,7 @@ WeatherProvider.register("weathergov", {
 			return;
 		}
 		this.fetchData(this.stationObsURL)
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.properties) {
 					// Did not receive usable new data.
 					return;
@@ -63,7 +63,9 @@ WeatherProvider.register("weathergov", {
 			.catch(function (request) {
 				Log.error("Could not load station obs data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	// Overwrite the fetchWeatherForecast method.
@@ -73,7 +75,7 @@ WeatherProvider.register("weathergov", {
 			return;
 		}
 		this.fetchData(this.forecastURL)
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.properties || !data.properties.periods || !data.properties.periods.length) {
 					// Did not receive usable new data.
 					return;
@@ -84,7 +86,9 @@ WeatherProvider.register("weathergov", {
 			.catch(function (request) {
 				Log.error("Could not load forecast hourly data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	/** Weather.gov Specific Methods - These are not part of the default provider methods */
@@ -94,7 +98,7 @@ WeatherProvider.register("weathergov", {
 	 */
 	fetchWxGovURLs(config) {
 		this.fetchData(`${config.apiBase}/points/${config.lat},${config.lon}`)
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.properties) {
 					// points URL did not respond with usable data.
 					return;
@@ -108,17 +112,17 @@ WeatherProvider.register("weathergov", {
 				// with this URL, we chain another promise for the station obs URL
 				return this.fetchData(data.properties.observationStations);
 			})
-			.then((obsData) => {
+			.then(function (obsData) {
 				if (!obsData || !obsData.features) {
 					// obs station URL did not respond with usable data.
 					return;
 				}
 				this.stationObsURL = obsData.features[0].id + "/observations/latest";
 			})
-			.catch((err) => {
+			.catch(function (err) {
 				Log.error(err);
 			})
-			.finally(() => {
+			.finally(function () {
 				// excellent, let's fetch some actual wx data
 				this.configURLs = true;
 				this.fetchCurrentWeather();
@@ -145,7 +149,7 @@ WeatherProvider.register("weathergov", {
 		currentWeather.precipitation = this.convertLength(currentWeatherData.precipitationLastHour.value);
 		currentWeather.feelsLikeTemp = this.convertTemp(currentWeatherData.heatIndex.value);
 
-		let isDaytime = true;
+		var isDaytime = true;
 		if (currentWeatherData.icon.includes("day")) {
 			isDaytime = true;
 		} else {
@@ -154,7 +158,7 @@ WeatherProvider.register("weathergov", {
 		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.textDescription, isDaytime);
 
 		// determine the sunrise/sunset times - not supplied in weather.gov data
-		let times = this.calcAstroData(this.config.lat, this.config.lon);
+		var times = this.calcAstroData(this.config.lat, this.config.lon);
 		currentWeather.sunrise = times[0];
 		currentWeather.sunset = times[1];
 
@@ -175,11 +179,11 @@ WeatherProvider.register("weathergov", {
 		// initial variable declaration
 		const days = [];
 		// variables for temperature range and rain
-		let minTemp = [];
-		let maxTemp = [];
+		var minTemp = [];
+		var maxTemp = [];
 		// variable for date
-		let date = "";
-		let weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
+		var date = "";
+		var weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
 		weather.precipitation = 0;
 
 		for (const forecast of forecasts) {
@@ -262,7 +266,7 @@ WeatherProvider.register("weathergov", {
 		const sunTimes = [];
 
 		// determine the sunrise/sunset times
-		let times = SunCalc.getTimes(new Date(), lat, lon);
+		var times = SunCalc.getTimes(new Date(), lat, lon);
 		sunTimes.push(moment(times.sunrise, "X"));
 		sunTimes.push(moment(times.sunset, "X"));
 

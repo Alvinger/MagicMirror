@@ -41,16 +41,16 @@ module.exports = NodeHelper.create({
 			return;
 		}
 
-		let fetcher;
+		var fetcher;
 		if (typeof this.fetchers[url] === "undefined") {
 			Log.log("Create new news fetcher for url: " + url + " - Interval: " + reloadInterval);
 			fetcher = new NewsfeedFetcher(url, reloadInterval, encoding, config.logFeedWarnings);
 
-			fetcher.onReceive(() => {
+			fetcher.onReceive(function () {
 				this.broadcastFeeds();
 			});
 
-			fetcher.onError((fetcher, error) => {
+			fetcher.onError(function (fetcher, error) {
 				this.sendSocketNotification("FETCH_ERROR", {
 					url: fetcher.url(),
 					error: error

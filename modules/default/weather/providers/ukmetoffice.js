@@ -22,7 +22,7 @@ WeatherProvider.register("ukmetoffice", {
 	// Overwrite the fetchCurrentWeather method.
 	fetchCurrentWeather() {
 		this.fetchData(this.getUrl("3hourly"))
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.SiteRep || !data.SiteRep.DV || !data.SiteRep.DV.Location || !data.SiteRep.DV.Location.Period || data.SiteRep.DV.Location.Period.length === 0) {
 					// Did not receive usable new data.
 					// Maybe this needs a better check?
@@ -37,13 +37,15 @@ WeatherProvider.register("ukmetoffice", {
 			.catch(function (request) {
 				Log.error("Could not load data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	// Overwrite the fetchCurrentWeather method.
 	fetchWeatherForecast() {
 		this.fetchData(this.getUrl("daily"))
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.SiteRep || !data.SiteRep.DV || !data.SiteRep.DV.Location || !data.SiteRep.DV.Location.Period || data.SiteRep.DV.Location.Period.length === 0) {
 					// Did not receive usable new data.
 					// Maybe this needs a better check?
@@ -58,7 +60,9 @@ WeatherProvider.register("ukmetoffice", {
 			.catch(function (request) {
 				Log.error("Could not load data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	/** UK Met Office Specific Methods - These are not part of the default provider methods */
@@ -76,13 +80,13 @@ WeatherProvider.register("ukmetoffice", {
 		const currentWeather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
 
 		// data times are always UTC
-		let nowUtc = moment.utc();
-		let midnightUtc = nowUtc.clone().startOf("day");
-		let timeInMins = nowUtc.diff(midnightUtc, "minutes");
+		var nowUtc = moment.utc();
+		var midnightUtc = nowUtc.clone().startOf("day");
+		var timeInMins = nowUtc.diff(midnightUtc, "minutes");
 
 		// loop round each of the (5) periods, look for today (the first period may be yesterday)
 		for (var i in currentWeatherData.SiteRep.DV.Location.Period) {
-			let periodDate = moment.utc(currentWeatherData.SiteRep.DV.Location.Period[i].value.substr(0, 10), "YYYY-MM-DD");
+			var periodDate = moment.utc(currentWeatherData.SiteRep.DV.Location.Period[i].value.substr(0, 10), "YYYY-MM-DD");
 
 			// ignore if period is before today
 			if (periodDate.isSameOrAfter(moment.utc().startOf("day"))) {
@@ -91,7 +95,7 @@ WeatherProvider.register("ukmetoffice", {
 					// loop round the reports looking for the one we are in
 					// $ value specifies the time in minutes-of-the-day: 0, 180, 360,...1260
 					for (var j in currentWeatherData.SiteRep.DV.Location.Period[i].Rep) {
-						let p = currentWeatherData.SiteRep.DV.Location.Period[i].Rep[j].$;
+						var p = currentWeatherData.SiteRep.DV.Location.Period[i].Rep[j].$;
 						if (timeInMins >= p && timeInMins - 180 < p) {
 							// finally got the one we want, so populate weather object
 							currentWeather.humidity = currentWeatherData.SiteRep.DV.Location.Period[i].Rep[j].H;
@@ -108,7 +112,7 @@ WeatherProvider.register("ukmetoffice", {
 		}
 
 		// determine the sunrise/sunset times - not supplied in UK Met Office data
-		let times = this.calcAstroData(currentWeatherData.SiteRep.DV.Location);
+		var times = this.calcAstroData(currentWeatherData.SiteRep.DV.Location);
 		currentWeather.sunrise = times[0];
 		currentWeather.sunset = times[1];
 
@@ -128,7 +132,7 @@ WeatherProvider.register("ukmetoffice", {
 
 			// data times are always UTC
 			const dateStr = forecasts.SiteRep.DV.Location.Period[j].value;
-			let periodDate = moment.utc(dateStr.substr(0, 10), "YYYY-MM-DD");
+			var periodDate = moment.utc(dateStr.substr(0, 10), "YYYY-MM-DD");
 
 			// ignore if period is before today
 			if (periodDate.isSameOrAfter(moment.utc().startOf("day"))) {
@@ -153,7 +157,7 @@ WeatherProvider.register("ukmetoffice", {
 		const sunTimes = [];
 
 		// determine the sunrise/sunset times
-		let times = SunCalc.getTimes(new Date(), location.lat, location.lon);
+		var times = SunCalc.getTimes(new Date(), location.lat, location.lon);
 		sunTimes.push(moment(times.sunrise, "X"));
 		sunTimes.push(moment(times.sunset, "X"));
 
@@ -246,7 +250,7 @@ WeatherProvider.register("ukmetoffice", {
 	 * return String - URL params.
 	 */
 	getParams(forecastType) {
-		let params = "?";
+		var params = "?";
 		params += "res=" + forecastType;
 		params += "&key=" + this.config.apiKey;
 

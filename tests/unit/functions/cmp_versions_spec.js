@@ -3,7 +3,7 @@ const path = require("path");
 const { JSDOM } = require("jsdom");
 
 describe("Test function cmpVersions in js/module.js", function () {
-	let cmp;
+	var cmp;
 
 	before(function (done) {
 		const dom = new JSDOM(

@@ -5,7 +5,7 @@ const { JSDOM } = require("jsdom");
 const express = require("express");
 
 describe("Translator", function () {
-	let server;
+	var server;
 
 	before(function () {
 		const app = express();
@@ -69,7 +69,7 @@ describe("Translator", function () {
 			dom.window.onload = function () {
 				const { Translator } = dom.window;
 				setTranslations(Translator);
-				let translation = Translator.translate({ name: "MMM-Module" }, "Hello");
+				translation = Translator.translate({ name: "MMM-Module" }, "Hello");
 				expect(translation).to.be.equal("Hallo");
 				translation = Translator.translate({ name: "MMM-Module" }, "Hello {username}", { username: "fewieden" });
 				expect(translation).to.be.equal("Hallo fewieden");
@@ -82,7 +82,7 @@ describe("Translator", function () {
 			dom.window.onload = function () {
 				const { Translator } = dom.window;
 				setTranslations(Translator);
-				let translation = Translator.translate({ name: "MMM-Module" }, "FOO");
+				var translation = Translator.translate({ name: "MMM-Module" }, "FOO");
 				expect(translation).to.be.equal("Foo");
 				translation = Translator.translate({ name: "MMM-Module" }, "BAR {something}", { something: "Lorem Ipsum" });
 				expect(translation).to.be.equal("Bar Lorem Ipsum");

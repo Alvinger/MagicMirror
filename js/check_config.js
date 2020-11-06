@@ -23,7 +23,7 @@ const Utils = require(rootPath + "/js/utils.js");
  */
 function getConfigFile() {
 	// FIXME: This function should be in core. Do you want refactor me ;) ?, be good!
-	let configFileName = path.resolve(rootPath + "/config/config.js");
+	var configFileName = path.resolve(rootPath + "/config/config.js");
 	if (process.env.MM_CONFIG_FILE) {
 		configFileName = path.resolve(process.env.MM_CONFIG_FILE);
 	}
@@ -64,7 +64,7 @@ function checkConfigFile() {
 		} else {
 			Log.error(Utils.colors.error("Your configuration file contains syntax errors :("));
 			// In case the there errors show messages and return
-			messages.forEach((error) => {
+			messages.forEach(function (error) {
 				Log.error("Line", error.line, "col", error.column, error.message);
 			});
 		}

@@ -21,11 +21,11 @@ const iconv = require("iconv-lite");
 const NewsfeedFetcher = function (url, reloadInterval, encoding, logFeedWarnings) {
 	const self = this;
 
-	let reloadTimer = null;
-	let items = [];
+	var reloadTimer = null;
+	var items = [];
 
-	let fetchFailedCallback = function () {};
-	let itemsReceivedCallback = function () {};
+	var fetchFailedCallback = function () {};
+	var itemsReceivedCallback = function () {};
 
 	if (reloadInterval < 1000) {
 		reloadInterval = 1000;
@@ -45,7 +45,7 @@ const NewsfeedFetcher = function (url, reloadInterval, encoding, logFeedWarnings
 
 		parser.on("item", function (item) {
 			const title = item.title;
-			let description = item.description || item.summary || item.content || "";
+			var description = item.description || item.summary || item.content || "";
 			const pubdate = item.pubdate || item.published || item.updated || item["dc:date"];
 			const url = item.url || item.link || "";
 

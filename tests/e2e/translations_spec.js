@@ -9,7 +9,7 @@ const { JSDOM } = require("jsdom");
 const express = require("express");
 
 describe("Translations", function () {
-	let server;
+	var server;
 
 	before(function () {
 		const app = express();
@@ -28,7 +28,7 @@ describe("Translations", function () {
 	});
 
 	it("should have a translation file in the specified path", function () {
-		for (let language in translations) {
+		for (var language in translations) {
 			const file = fs.statSync(translations[language]);
 			expect(file.isFile()).to.be.equal(true);
 		}
@@ -42,7 +42,7 @@ describe("Translations", function () {
 	};
 
 	describe("Parsing language files through the Translator class", function () {
-		for (let language in translations) {
+		for (var language in translations) {
 			it(`should parse ${language}`, function (done) {
 				const dom = new JSDOM(
 					`<script>var translations = ${JSON.stringify(translations)}; var Log = {log: function(){}};</script>\
@@ -63,7 +63,7 @@ describe("Translations", function () {
 	});
 
 	describe("Same keys", function () {
-		let base;
+		var base;
 
 		before(function (done) {
 			const dom = new JSDOM(
@@ -81,13 +81,13 @@ describe("Translations", function () {
 			};
 		});
 
-		for (let language in translations) {
+		for (var language in translations) {
 			if (language === "en") {
 				continue;
 			}
 
 			describe(`Translation keys of ${language}`, function () {
-				let keys;
+				var keys;
 
 				before(function (done) {
 					const dom = new JSDOM(
@@ -120,7 +120,9 @@ describe("Translations", function () {
 						expect(keys).to.deep.equal(base);
 					} catch (e) {
 						if (e instanceof chai.AssertionError) {
-							const diff = base.filter((key) => !keys.includes(key));
+							const diff = base.filter(function (key) {
+								!keys.includes(key);
+							});
 							mlog.pending(`Missing Translations for language ${language}: ${diff}`);
 							this.skip();
 						} else {

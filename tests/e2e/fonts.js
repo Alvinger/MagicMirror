@@ -38,7 +38,7 @@ describe("All font files from roboto.css should be downloadable", function () {
 		return helpers.stopApplication(app);
 	});
 
-	forEach(fontFiles).it("should return 200 HTTP code for file '%s'", (fontFile, done) => {
+	forEach(fontFiles).it("should return 200 HTTP code for file '%s'", function (fontFile, done) {
 		var fontUrl = "http://localhost:8080/fonts/" + fontFile;
 		request.get(fontUrl, function (err, res, body) {
 			expect(res.statusCode).to.equal(200);

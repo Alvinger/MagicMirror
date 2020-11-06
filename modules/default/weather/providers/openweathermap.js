@@ -17,7 +17,7 @@ WeatherProvider.register("openweathermap", {
 	// Overwrite the fetchCurrentWeather method.
 	fetchCurrentWeather() {
 		this.fetchData(this.getUrl())
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.main || typeof data.main.temp === "undefined") {
 					// Did not receive usable new data.
 					// Maybe this needs a better check?
@@ -32,13 +32,15 @@ WeatherProvider.register("openweathermap", {
 			.catch(function (request) {
 				Log.error("Could not load data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	// Overwrite the fetchWeatherForecast method.
 	fetchWeatherForecast() {
 		this.fetchData(this.getUrl())
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.list || !data.list.length) {
 					// Did not receive usable new data.
 					// Maybe this needs a better check?
@@ -53,13 +55,15 @@ WeatherProvider.register("openweathermap", {
 			.catch(function (request) {
 				Log.error("Could not load data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	// Overwrite the fetchWeatherData method.
 	fetchWeatherData() {
 		this.fetchData(this.getUrl())
-			.then((data) => {
+			.then(function (data) {
 				if (!data) {
 					// Did not receive usable new data.
 					// Maybe this needs a better check?
@@ -74,7 +78,9 @@ WeatherProvider.register("openweathermap", {
 			.catch(function (request) {
 				Log.error("Could not load data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	/** OpenWeatherMap Specific Methods - These are not part of the default provider methods */
@@ -135,13 +141,13 @@ WeatherProvider.register("openweathermap", {
 		// initial variable declaration
 		const days = [];
 		// variables for temperature range and rain
-		let minTemp = [];
-		let maxTemp = [];
-		let rain = 0;
-		let snow = 0;
+		var minTemp = [];
+		var maxTemp = [];
+		var rain = 0;
+		var snow = 0;
 		// variable for date
-		let date = "";
-		let weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
+		var date = "";
+		var weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
 
 		for (const forecast of forecasts) {
 			if (date !== moment(forecast.dt, "X").format("YYYY-MM-DD")) {
@@ -260,7 +266,7 @@ WeatherProvider.register("openweathermap", {
 	 * Minutely forecasts are excluded for the moment, see getParams().
 	 */
 	fetchOnecall(data) {
-		let precip = false;
+		var precip = false;
 
 		// get current weather, if requested
 		const current = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
@@ -295,7 +301,7 @@ WeatherProvider.register("openweathermap", {
 			current.feelsLikeTemp = data.current.feels_like;
 		}
 
-		let weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
+		var weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits);
 
 		// get hourly weather, if requested
 		const hours = [];
@@ -411,7 +417,7 @@ WeatherProvider.register("openweathermap", {
 	 * return String - URL params.
 	 */
 	getParams() {
-		let params = "?";
+		var params = "?";
 		if (this.config.weatherEndpoint === "/onecall") {
 			params += "lat=" + this.config.lat;
 			params += "&lon=" + this.config.lon;

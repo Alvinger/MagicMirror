@@ -31,7 +31,7 @@ describe("Functions module weatherforecast", function () {
 				[10.1, "10"]
 			];
 
-			values.forEach((value) => {
+			values.forEach(function (value) {
 				it(`for ${value[0]} should be return ${value[1]}`, function () {
 					expect(Module.definitions.weatherforecast.roundValue(value[0])).to.equal(value[1]);
 				});
@@ -56,7 +56,7 @@ describe("Functions module weatherforecast", function () {
 				[10.1, "10.1"]
 			];
 
-			values.forEach((value) => {
+			values.forEach(function (value) {
 				it(`for ${value[0]} should be return ${value[1]}`, function () {
 					expect(Module.definitions.weatherforecast.roundValue(value[0])).to.equal(value[1]);
 				});

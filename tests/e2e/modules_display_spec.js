@@ -28,12 +28,12 @@ describe("Display of modules", function () {
 			process.env.MM_CONFIG_FILE = "tests/configs/modules/display.js";
 		});
 
-		it("should show the test header", async () => {
+		it("should show the test header", async function () {
 			await app.client.waitForExist("#module_0_helloworld", 10000);
 			return app.client.element("#module_0_helloworld .module-header").isVisible().should.eventually.equal(true).getText("#module_0_helloworld .module-header").should.eventually.equal("TEST_HEADER");
 		});
 
-		it("should show no header if no header text is specified", async () => {
+		it("should show no header if no header text is specified", async function () {
 			await app.client.waitForExist("#module_1_helloworld", 10000);
 			return app.client.element("#module_1_helloworld .module-header").isVisible().should.eventually.equal(false);
 		});

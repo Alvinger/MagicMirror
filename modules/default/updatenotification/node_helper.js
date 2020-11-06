@@ -29,7 +29,7 @@ module.exports = NodeHelper.create({
 
 				try {
 					Log.info("Checking git for module: " + moduleName);
-					let stat = fs.statSync(path.join(moduleFolder, ".git"));
+					var stat = fs.statSync(path.join(moduleFolder, ".git"));
 					promises.push(this.resolveRemote(moduleName, moduleFolder));
 				} catch (err) {
 					// Error when directory .git doesn't exist
@@ -49,15 +49,17 @@ module.exports = NodeHelper.create({
 			// if this is the 1st time thru the update check process
 			if (!this.updateProcessStarted) {
 				this.updateProcessStarted = true;
-				this.configureModules(payload).then(() => this.performFetch());
+				this.configureModules(payload).then(function () {
+					this.performFetch();
+				});
 			}
 		}
 	},
 
 	resolveRemote: function (moduleName, moduleFolder) {
-		return new Promise((resolve, reject) => {
+		return new Promise(function (resolve, reject) {
 			var git = SimpleGit(moduleFolder);
-			git.getRemotes(true, (err, remotes) => {
+			git.getRemotes(true, function (err, remotes) {
 				if (remotes.length < 1 || remotes[0].name.length < 1) {
 					// No valid remote for folder, skip
 					return resolve();
@@ -71,11 +73,11 @@ module.exports = NodeHelper.create({
 
 	performFetch: function () {
 		var self = this;
-		simpleGits.forEach((sg) => {
-			sg.git.fetch(["--dry-run"]).status((err, data) => {
+		simpleGits.forEach(function (sg) {
+			sg.git.fetch(["--dry-run"]).status(function (err, data) {
 				data.module = sg.module;
 				if (!err) {
-					sg.git.log({ "-1": null }, (err, data2) => {
+					sg.git.log({ "-1": null }, function (err, data2) {
 						if (!err && data2.latest && "hash" in data2.latest) {
 							data.hash = data2.latest.hash;
 							self.sendSocketNotification("STATUS", data);

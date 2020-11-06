@@ -4,8 +4,8 @@ const { JSDOM } = require("jsdom");
 
 describe("File js/class", function () {
 	describe("Test function cloneObject", function () {
-		let clone;
-		let dom;
+		var clone;
+		var dom;
 
 		before(function (done) {
 			dom = new JSDOM(
@@ -35,8 +35,8 @@ describe("File js/class", function () {
 		});
 
 		it("should clone number", function () {
-			let expected = 1;
-			let obj = clone(expected);
+			var expected = 1;
+			var obj = clone(expected);
 			expect(obj).to.equal(expected);
 
 			expected = 1.23;
@@ -85,7 +85,7 @@ describe("File js/class", function () {
 		});
 
 		describe("Test lockstring code", function () {
-			let log;
+			var log;
 
 			before(function () {
 				log = dom.window.Log.log;

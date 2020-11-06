@@ -108,7 +108,7 @@ describe("Clock module", function () {
 			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_analog.js";
 		});
 
-		it("should show the analog clock face", async () => {
+		it("should show the analog clock face", async function () {
 			await app.client.waitUntilWindowLoaded(10000);
 			const clock = await app.client.$$(".clockCircle");
 			return expect(clock.length).equals(1);

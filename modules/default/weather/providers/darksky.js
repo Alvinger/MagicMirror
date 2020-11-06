@@ -22,7 +22,7 @@ WeatherProvider.register("darksky", {
 
 	fetchCurrentWeather() {
 		this.fetchData(this.getUrl())
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.currently || typeof data.currently.temperature === "undefined") {
 					// No usable data?
 					return;
@@ -34,12 +34,14 @@ WeatherProvider.register("darksky", {
 			.catch(function (request) {
 				Log.error("Could not load data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	fetchWeatherForecast() {
 		this.fetchData(this.getUrl())
-			.then((data) => {
+			.then(function (data) {
 				if (!data || !data.daily || !data.daily.data.length) {
 					// No usable data?
 					return;
@@ -51,7 +53,9 @@ WeatherProvider.register("darksky", {
 			.catch(function (request) {
 				Log.error("Could not load data ... ", request);
 			})
-			.finally(() => this.updateAvailable());
+			.finally(function () {
+				this.updateAvailable();
+			});
 	},
 
 	// Create a URL from the config and base URL.
