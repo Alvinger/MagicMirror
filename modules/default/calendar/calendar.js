@@ -11,6 +11,7 @@ Module.register("calendar", {
 	defaults: {
 		maximumEntries: 10, // Total Maximum Entries
 		maximumNumberOfDays: 365,
+		maximumDaysShown: 365,
 		displaySymbol: true,
 		defaultSymbol: "calendar", // Fontawesome Symbol see https://fontawesome.com/cheatsheet?from=io
 		showLocation: false,
@@ -37,6 +38,7 @@ Module.register("calendar", {
 		hideOngoing: false,
 		colored: false,
 		coloredSymbolOnly: false,
+		coloredEvents: [],
 		tableClass: "small",
 		calendars: [
 			{
@@ -237,6 +239,17 @@ Module.register("calendar", {
 			var titleWrapper = document.createElement("td"),
 				repeatingCountTitle = "";
 
+			if (this.config.coloredEvents.length > 0) {
+				for (var ev in this.config.coloredEvents) {
+					var needle = new RegExp(this.config.coloredEvents[ev].keyword, "gi");
+					if (needle.test(event.title)) {
+						eventWrapper.style.cssText = "color:" + this.config.coloredEvents[ev].color;
+						titleWrapper.style.cssText = "color:" + this.config.coloredEvents[ev].color;
+						break;
+					}
+				}
+			}
+
 			if (this.config.displayRepeatingCountTitle && event.firstYear !== undefined) {
 				repeatingCountTitle = this.countTitleForUrl(event.url);
 
@@ -259,6 +272,7 @@ Module.register("calendar", {
 			}
 
 			var timeWrapper;
+			var innerHTML;
 
 			if (this.config.timeFormat === "dateheaders") {
 				if (event.fullDayEvent) {
@@ -288,35 +302,26 @@ Module.register("calendar", {
 				if (event.fullDayEvent) {
 					//subtract one second so that fullDayEvents end at 23:59:59, and not at 0:00:00 one the next day
 					event.endDate -= oneSecond;
-					if (event.today) {
-						timeWrapper.innerHTML = this.capFirst(this.translate("TODAY"));
-					} else if (event.startDate - now < oneDay && event.startDate - now > 0) {
-						timeWrapper.innerHTML = this.capFirst(this.translate("TOMORROW"));
-					} else if (event.startDate - now < 2 * oneDay && event.startDate - now > 0) {
-						if (this.translate("DAYAFTERTOMORROW") !== "DAYAFTERTOMORROW") {
-							timeWrapper.innerHTML = this.capFirst(this.translate("DAYAFTERTOMORROW"));
-						} else {
-							timeWrapper.innerHTML = this.capFirst(moment(event.startDate, "x").fromNow());
+					innerHTML = moment(event.startDate, "x").format(this.config.fullDayEventDateFormat);
+					if (this.config.timeFormat === "absolute") {
+						if (this.config.urgency > 1 && event.startDate - now < this.config.urgency * oneDay) {
+							// This event falls within the config.urgency period that the user has set
+							innerHTML = moment(event.startDate, "x").from(moment().format("YYYYMMDD"));
 						}
 					} else {
-						/* Check to see if the user displays absolute or relative dates with their events
-						 * Also check to see if an event is happening within an 'urgency' time frameElement
-						 * For example, if the user set an .urgency of 7 days, those events that fall within that
-						 * time frame will be displayed with 'in xxx' time format or moment.fromNow()
-						 *
-						 * Note: this needs to be put in its own function, as the whole thing repeats again verbatim
-						 */
-						if (this.config.timeFormat === "absolute") {
-							if (this.config.urgency > 1 && event.startDate - now < this.config.urgency * oneDay) {
-								// This event falls within the config.urgency period that the user has set
-								timeWrapper.innerHTML = this.capFirst(moment(event.startDate, "x").from(moment().format("YYYYMMDD")));
+						if (event.today) {
+							innerHTML = this.translate("TODAY");
+						} else if (event.startDate - now < oneDay && event.startDate - now > 0) {
+							innerHTML = this.translate("TOMORROW");
+						} else if (event.startDate - now < 2 * oneDay && event.startDate - now > 0) {
+							if (this.translate("DAYAFTERTOMORROW") !== "DAYAFTERTOMORROW") {
+								innerHTML = this.translate("DAYAFTERTOMORROW");
 							} else {
-								timeWrapper.innerHTML = this.capFirst(moment(event.startDate, "x").format(this.config.fullDayEventDateFormat));
+								innerHTML = moment(event.startDate, "x").fromNow();
 							}
-						} else {
-							timeWrapper.innerHTML = this.capFirst(moment(event.startDate, "x").from(moment().format("YYYYMMDD")));
 						}
 					}
+					timeWrapper.innerHTML = this.capFirst(innerHTML);
 					if (this.config.showEnd) {
 						timeWrapper.innerHTML += "-";
 						timeWrapper.innerHTML += this.capFirst(moment(event.endDate, "x").format(this.config.fullDayEventDateFormat));
@@ -458,7 +463,8 @@ Module.register("calendar", {
 		var events = [];
 		var today = moment().startOf("day");
 		var now = new Date();
-		var future = moment().startOf("day").add(this.config.maximumNumberOfDays, "days").toDate();
+		var future = today.clone().add(this.config.maximumNumberOfDays, "days");
+
 		for (var c in this.calendarData) {
 			var calendar = this.calendarData[c];
 			for (var e in calendar) {
@@ -467,6 +473,7 @@ Module.register("calendar", {
 				if (event.endDate < now) {
 					continue;
 				}
+
 				if (this.config.hidePrivate) {
 					if (event.class === "PRIVATE") {
 						// do not add the current event, skip it
@@ -521,6 +528,33 @@ Module.register("calendar", {
 		events.sort(function (a, b) {
 			return a.startDate - b.startDate;
 		});
+
+		// If maximumDaysShown > 0 then limit number of days shown
+		if (this.config.maximumDaysShown > 0) {
+			var lastDate = today.clone().subtract(1, "days").format("YYYYMMDD");
+			var daysShown = 0;
+			for (var e in events) {
+				var eventDate = moment(events[e].startDate, "x").format("YYYYMMDD");
+				if (eventDate > lastDate) {
+					if (daysShown <= this.config.maximumDaysShown) {
+						daysShown++;
+						if (daysShown <= this.config.maximumDaysShown) {
+							lastDate = eventDate;
+						}
+					}
+				}
+			}
+			var tmpEvents = [];
+			for (var e in events) {
+				var eventDate = moment(events[e].startDate, "x").format("YYYYMMDD");
+				if (eventDate > lastDate) {
+					continue;
+				}
+				tmpEvents.push(events[e]);
+			}
+			events = tmpEvents;
+		}
+
 		return events.slice(0, this.config.maximumEntries);
 	},
 

@@ -344,7 +344,8 @@ const CalendarFetcher = function (url, reloadInterval, excludedEvents, maximumEn
 				return a.startDate - b.startDate;
 			});
 
-			events = newEvents.slice(0, maximumEntries);
+			//			events = newEvents.slice(0, maximumEntries);
+			events = newEvents;
 
 			self.broadcastEvents();
 			scheduleTimer();
